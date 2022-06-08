@@ -127,6 +127,7 @@ int main(int argc, char *argv[]) {
         printf("\n\n\nProgram error output (to stderr):\n------------------\n");
         /* bad option (not -f or -r) */
         fprintf(stderr, "Usage: %s [-r | -f] file\n", argv[0]);
+        exit(1);
     }
 
     queue_t readyq;
@@ -174,6 +175,7 @@ int main(int argc, char *argv[]) {
                         cpu->time_completed = tick; // when done stat
                         cpu->time_io--;
                         //printf("process ended1: %s\n", cpu->name);
+
                         cpu = NULL;
                         cpu1->status = "idle";
                     }
@@ -321,6 +323,7 @@ int main(int argc, char *argv[]) {
                 if (DEBUG) { printf("Remaining runtime %d - ", cpu->time_remain); }
                 if (cpu->time_remain == 0) {
                     cpu->time_completed = tick; // when done stat
+                    cpu->given_cpu++;
                     if (DEBUG) { printf("%s ended2 - ", cpu->name); }
                     cpu = NULL;
                     cpu1->status = "idle";
@@ -391,6 +394,12 @@ int main(int argc, char *argv[]) {
                     if (DEBUG) {printf("%d time units on i/o device\n", io1->stop_run - tick);}
                 }
                 if (tick == io1->stop_run) {
+
+                    //queue_enqueue(readyq, iodev);
+                    if (queue_length(ioq) == 0 && queue_length(readyq) == 0 && iodev->time_remain == 0 && strcmp(cpu1->status, "idle") == 0) {
+                        tick--;
+                        printf("subtracting");
+                    }
                     queue_enqueue(readyq, iodev);
                     iodev = NULL;
                     io1->status = "idle";
@@ -505,3 +514,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
