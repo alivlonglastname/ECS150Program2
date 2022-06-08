@@ -165,7 +165,8 @@ int main(int argc, char *argv[]) {
                 } else {
                     if (cpu->time_remain == 0) {
                         cpu->time_completed = tick; // when done stat
-                        printf("process ended1: %s\n", cpu->name);
+                        cpu->time_io--;
+                        //printf("process ended1: %s\n", cpu->name);
                         cpu = NULL;
                         cpu1->status = "idle";
                     }
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]) {
                 if (cpu->time_remain == 0) {
                     //printf("PRINT stuff\n");
                     cpu->time_completed = tick; // when done stat
-                    printf("process ended2: %s\n", cpu->name);
+                    //printf("process ended2: %s\n", cpu->name);
                     cpu = NULL;
                     cpu1->status = "idle";
                 }
@@ -240,7 +241,7 @@ int main(int argc, char *argv[]) {
 
                     }
 
-                    printf("%d tick   has %d time units on i/o device\n", tick, io1->stop_run - tick);
+                    //printf("%d tick   has %d time units on i/o device\n", tick, io1->stop_run - tick);
                 }
                 if (tick == io1->stop_run) {
                     queue_enqueue(readyq, iodev);
@@ -301,6 +302,7 @@ int main(int argc, char *argv[]) {
                 } else {
                     if (cpu->time_remain == 0) {
                         cpu->time_completed = tick; // when done stat
+                        cpu->time_io--;
                         if (DEBUG) { printf("%s ended1 - ", cpu->name); };
                         cpu = NULL;
                         cpu1->status = "idle";
