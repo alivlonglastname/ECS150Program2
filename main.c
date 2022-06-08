@@ -10,9 +10,16 @@ compiler  40  0.53          nextone   10    0.99
 adventure 30  0.72
 */
 #define DEBUG 1
-
+// min function
 int min(int a, int b) {
     return (a > b) ? b : a;
+}
+// swap function for sorting at thend (bubble sort cuz im lazy :P)
+void swap(int **xp, int **yp)
+{
+    int temp = **xp;
+    **xp = **yp;
+    **yp = temp;
 }
 
 struct cpu {
@@ -407,16 +414,29 @@ int main(int argc, char *argv[]) {
        * printing process information
        */
 
-    printf("Program output (to stdout):\n------------------\n");
+//    printf("Program output (to stdout):\n------------------\n");
     /* header line */
     printf("Processes:\n\n");
     printf("   name     CPU time  when done  cpu disp  i/o disp  i/o time\n"
     );
     /* for process information */
-    for (int i = 0; i < jobCounter; i++) {
-        printf("%-10s %6d     %6d    %6d    %6d    %6d\n", arr_job[i].name, arr_job[i].time_to_run,
-               arr_job[i].time_completed, arr_job[i].given_cpu, arr_job[i].io_blocks, arr_job[i].time_io);
+    int iters = 0;
+    // printing jobs
+    while (iters < jobCounter) {
+        iters++;
+        int lowest = 100000;
+        int index = 0;
+        for (int i = 0; i < jobCounter; i++) {
+            if (arr_job[i].time_completed < lowest) {
+                index = i;
+                lowest = arr_job[i].time_completed;
+            }
+        }
+        printf("%-10s %6d     %6d    %6d    %6d    %6d\n", arr_job[index].name, arr_job[index].time_to_run,
+               arr_job[index].time_completed, arr_job[index].given_cpu, arr_job[index].io_blocks, arr_job[index].time_io);
+        arr_job[index].time_completed = 1000000;
     }
+
 
     /* print clock time at end */
     printf("\nSystem:\n");
@@ -457,26 +477,26 @@ int main(int argc, char *argv[]) {
     printf("Number of dispatches: %d\n", io_dispatch);
     printf("Overall throughput: %.2f\n", (double)((double)jobCounter/(double)total_time)); // need to change to include variable amount of processes
 
-    /*
-     * error messages
-     * the arguments for %s(%d) are file name and line number,
-     *     respectively
-     * all cause exit with status code 1 (ie, exit(1))
-     */
-    printf("\n\n\nProgram error output (to stderr):\n------------------\n");
-    /* bad option (not -f or -r) */
-    fprintf(stderr, "Usage: %s [-r | -f] file\n", argv[0]);
-    /* can't open file */
-    errno = ENOENT;
-    perror("filename");
-    /* the line in the input file is malformed */
-    fprintf(stderr, "Malformed line %s(%d)\n", "filename", 100);
-    /* process name is to long (over 10 characters) */
-    fprintf(stderr, "name is too long %s(%d)\n", "filename", 100);
-    /* runtime is 0 or less */
-    fprintf(stderr, "runtime is not positive integer %s(%d)\n", "filename", 100);
-    /* probability is not between 0 and 1 */
-    fprintf(stderr, "probability < 0 or > 1 %s(%d)\n", "filename", 100);
+//    /*
+//     * error messages
+//     * the arguments for %s(%d) are file name and line number,
+//     *     respectively
+//     * all cause exit with status code 1 (ie, exit(1))
+//     */
+//    printf("\n\n\nProgram error output (to stderr):\n------------------\n");
+//    /* bad option (not -f or -r) */
+//    fprintf(stderr, "Usage: %s [-r | -f] file\n", argv[0]);
+//    /* can't open file */
+//    errno = ENOENT;
+//    perror("filename");
+//    /* the line in the input file is malformed */
+//    fprintf(stderr, "Malformed line %s(%d)\n", "filename", 100);
+//    /* process name is to long (over 10 characters) */
+//    fprintf(stderr, "name is too long %s(%d)\n", "filename", 100);
+//    /* runtime is 0 or less */
+//    fprintf(stderr, "runtime is not positive integer %s(%d)\n", "filename", 100);
+//    /* probability is not between 0 and 1 */
+//    fprintf(stderr, "probability < 0 or > 1 %s(%d)\n", "filename", 100);
 
 
 
@@ -484,10 +504,4 @@ int main(int argc, char *argv[]) {
 
 
     return 0;
-}
-
-void debug(char *string) {
-    if (DEBUG) {
-        printf("%s", string);
-    }
 }
