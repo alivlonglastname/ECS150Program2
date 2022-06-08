@@ -9,7 +9,7 @@ editor    5   0.87          biggie    20    0.99
 compiler  40  0.53          nextone   10    0.99
 adventure 30  0.72
 */
-#define DEBUG 1
+#define DEBUG 0
 // min function
 int min(int a, int b) {
     return (a > b) ? b : a;
@@ -398,7 +398,6 @@ int main(int argc, char *argv[]) {
                     //queue_enqueue(readyq, iodev);
                     if (queue_length(ioq) == 0 && queue_length(readyq) == 0 && iodev->time_remain == 0 && strcmp(cpu1->status, "idle") == 0) {
                         tick--;
-                        printf("subtracting");
                     }
                     queue_enqueue(readyq, iodev);
                     iodev = NULL;
