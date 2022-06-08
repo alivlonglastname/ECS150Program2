@@ -9,7 +9,11 @@ editor    5   0.87          biggie    20    0.99
 compiler  40  0.53          nextone   10    0.99
 adventure 30  0.72
 */
-#define DEBUG 0
+#define DEBUG 1
+
+int min(int a, int b) {
+    return (a > b) ? b : a;
+}
 
 struct cpu {
     char *status;
@@ -290,7 +294,8 @@ int main(int argc, char *argv[]) {
 
                         int r = random();
                         // random for rr is between 0 and 5 apparently
-                        cpu1->stop_run = tick + (r % quantum + 1) - 1;
+                        int val = min(5, cpu->time_remain);
+                        cpu1->stop_run = tick + (r % val);
                         if (DEBUG) { printf("%s stoppin at tick=%d - ", cpu->name, cpu1->stop_run); }
                     }
                 } else {
@@ -312,6 +317,7 @@ int main(int argc, char *argv[]) {
                     cpu1->status = "idle";
                     localtick = 0;
                 }
+
             }
             if (cpu != NULL) {
                 if (tick == cpu1->stop_run && cpu->time_remain > 0) {
@@ -354,7 +360,6 @@ int main(int argc, char *argv[]) {
                         iodev = ptr;
                         iodev->io_blocks++; // i/o disp stat (increment for when blocked for i/o)
                         io1->status = "active";
-                        if (DEBUG) {printf("%s in IOq for %d ticks - ", iodev->name, io1->stop_run - tick);}
                         iodev->time_remain--;
                         localtick = 0;
                     }
